@@ -90,7 +90,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
             contentPadding = PaddingValues(horizontal = 24.dp)
         ) {
             itemsIndexed(modes) { index, (label, time) ->
@@ -106,13 +106,18 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                             timeLeft = time
                             isRunning = false
                         }
-                        .padding(horizontal = 20.dp, vertical = 10.dp),
+                        .then(
+                            if (label.startsWith("5") || label.startsWith("15"))
+                                Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                            else
+                                Modifier.padding(horizontal = 20.dp, vertical = 10.dp)
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = label,
                         color = Color.White,
-                        style = MaterialTheme.typography.bodyLarge
+                        fontSize = if (label.startsWith("5") || label.startsWith("15")) 14.sp else 16.sp
                     )
                 }
             }
@@ -203,7 +208,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 .fillMaxWidth()
                 .background(color = Color.Black)
                 .height(60.dp)
-                .padding(end = 16.dp, top = 30.dp),
+                .padding(end = 16.dp, top = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.End),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -223,7 +228,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     modifier = Modifier
                         .size(40.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFF0A0A0A))
+                        .background(Color(0xFF111111))
                         .clickable { isRunning = true },
                     contentAlignment = Alignment.Center
                 ) {
@@ -251,7 +256,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     modifier = Modifier
                         .size(40.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFF0A0A0A))
+                        .background(Color(0xFF111111))
                         .clickable { isRunning = false },
                     contentAlignment = Alignment.Center
                 ) {
@@ -263,21 +268,21 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     )
                 }
             }
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFF0A0A0A))
-                        .clickable { timeLeft = totalTime; isRunning = false },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Refresh,
-                        contentDescription = "Reset",
-                        tint = Color.White,
-                        modifier = Modifier.size(32.dp)
-                    )
-                }
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFF111111))
+                    .clickable { timeLeft = totalTime; isRunning = false },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Refresh,
+                    contentDescription = "Reset",
+                    tint = Color.White,
+                    modifier = Modifier.size(30.dp)
+                )
+            }
         }
     }
 }
