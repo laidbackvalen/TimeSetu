@@ -1,4 +1,4 @@
-package com.timesetu.ui.navigation
+package com.valenpateltimesetu.ui.navigation
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
@@ -8,10 +8,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.timesetu.ui.navigation.bottomnav.BottomNavigtionBar
-import com.timesetu.ui.screens.HomeScreen
-import com.timesetu.ui.screens.SettingsScreen
-import com.timesetu.ui.screens.SplashScreen
+import com.valenpateltimesetu.ui.navigation.bottomnav.BottomNavigtionBar
+import com.valenpateltimesetu.ui.screens.HomeScreen
+import com.valenpateltimesetu.ui.screens.SettingsScreen
+import com.valenpateltimesetu.ui.screens.SplashScreen
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()

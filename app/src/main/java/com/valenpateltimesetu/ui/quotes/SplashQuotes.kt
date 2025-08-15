@@ -1,4 +1,4 @@
-package com.timesetu.ui.quotes
+package com.valenpateltimesetu.ui.quotes
 val splashQuotes = listOf(
     "Focus. Break. Repeat.⏳",
     "25 minutes to greatness. 🌟",

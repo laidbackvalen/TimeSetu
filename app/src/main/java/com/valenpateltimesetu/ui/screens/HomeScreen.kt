@@ -1,4 +1,4 @@
-package com.timesetu.ui.screens
+package com.valenpateltimesetu.ui.screens
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -25,7 +25,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.timesetu.ui.theme.backgroundColor
+import com.valenpateltimesetu.ui.theme.backgroundColor
 import kotlinx.coroutines.delay
 import kotlin.math.*
 @Composable

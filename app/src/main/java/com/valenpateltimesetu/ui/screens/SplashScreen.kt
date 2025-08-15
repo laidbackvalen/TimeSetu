@@ -1,4 +1,4 @@
-package com.timesetu.ui.screens
+package com.valenpateltimesetu.ui.screens
 
     import androidx.compose.animation.core.animateDpAsState
     import androidx.compose.animation.core.animateFloatAsState
@@ -28,7 +28,7 @@ package com.timesetu.ui.screens
     import androidx.navigation.NavHostController
     import androidx.compose.ui.graphics.Color
     import androidx.compose.ui.unit.Dp
-    import com.timesetu.ui.quotes.splashQuotes
+    import com.valenpateltimesetu.ui.quotes.splashQuotes
     import kotlinx.coroutines.delay
 
     @Composable

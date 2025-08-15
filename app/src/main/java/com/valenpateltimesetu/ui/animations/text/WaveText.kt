@@ -1,4 +1,4 @@
-package com.timesetu.ui.animations.text
+package com.valenpateltimesetu.ui.animations.text
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween

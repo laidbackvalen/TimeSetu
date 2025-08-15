@@ -1,4 +1,4 @@
-package com.timesetu.ui.theme
+package com.valenpateltimesetu.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

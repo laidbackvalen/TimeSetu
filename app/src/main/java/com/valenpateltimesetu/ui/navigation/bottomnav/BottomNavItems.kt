@@ -1,4 +1,4 @@
-package com.timesetu.ui.navigation.bottomnav
+package com.valenpateltimesetu.ui.navigation.bottomnav
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home

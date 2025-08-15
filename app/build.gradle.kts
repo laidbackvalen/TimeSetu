@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.timesetu"
+    namespace = "com.valenpateltimesetu"
     compileSdk = 36
 
     defaultConfig {
