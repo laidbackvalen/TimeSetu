@@ -8,7 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.valenpateltimesetu.ui.navigation.bottomnav.BottomNavigtionBar
+import com.valenpateltimesetu.ui.navigation.bottomnav.BottomNavigationBar
 import com.valenpateltimesetu.ui.screens.HomeScreen
 import com.valenpateltimesetu.ui.screens.SettingsScreen
 import com.valenpateltimesetu.ui.screens.SplashScreen
@@ -21,7 +21,7 @@ fun AppNavigation() {
     Scaffold(
         bottomBar = {
             if (showBottomBar) {
-                BottomNavigtionBar(navController)
+                BottomNavigationBar(navController)
             }
         }
     ) { innerPadding ->

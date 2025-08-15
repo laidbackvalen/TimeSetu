@@ -1,5 +1,14 @@
 package com.valenpateltimesetu.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,6 +18,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PlayArrow
@@ -18,21 +28,38 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.valenpateltimesetu.ui.theme.backgroundColor
+import com.valenpateltimesetu.ui.theme.themeColor
 import kotlinx.coroutines.delay
 import kotlin.math.*
+
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
     var totalTime by remember { mutableStateOf(25 * 60 * 1000L) }
     var timeLeft by remember { mutableStateOf(totalTime) }
     var isRunning by remember { mutableStateOf(false) }
+
+    val infiniteTransition = rememberInfiniteTransition(label = "bounceAnim")
+    val bounceScale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.05f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 500, easing = LinearOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "bounceScale"
+    )
+
 
     LaunchedEffect(isRunning) {
         while (isRunning && timeLeft > 0) {
@@ -90,11 +117,12 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 }
             }
         }
-        
+
         Box(contentAlignment = Alignment.Center, modifier = Modifier) {
             Canvas(
                 modifier = Modifier
                     .size(circleSize)
+                    .scale(if (!isRunning) bounceScale else 1f)
                     .pointerInput(true) {
                         detectDragGestures { change, _ ->
                             val center = Offset(
@@ -147,54 +175,109 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     center = Offset(handleX, handleY)
                 )
             }
-            Text(
-                text = "${(timeLeft / 1000) / 60}:${
-                    (timeLeft / 1000 % 60).toString().padStart(2, '0')
-                }",
-                color = Color.White,
-                style = MaterialTheme.typography.headlineMedium
-            )
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    "TimeSetu⏳",
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(50))
+                        .background(color = Color.DarkGray)
+                        .padding(horizontal = 12.dp, vertical = 4.dp),
+                    fontFamily = FontFamily.SansSerif
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    "${(timeLeft / 1000) / 60}:${
+                        (timeLeft / 1000 % 60).toString().padStart(2, '0')
+                    }",
+                    color = Color.White,
+                    fontSize = 40.sp,
+                    style = MaterialTheme.typography.headlineMedium
+                )
+            }
         }
-        
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(color = Color.Black)
                 .height(60.dp)
-                .padding(end = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp,  Alignment.End),
+                .padding(end = 16.dp, top = 30.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.End),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(Color(0xFF050505))
-                    .clickable { isRunning = !isRunning },
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = if (isRunning) Icons.Filled.Close else Icons.Filled.PlayArrow,
-                    contentDescription = if (isRunning) "Pause" else "Start",
-                    tint = Color.White,
-                    modifier = Modifier.size(32.dp)
+            // Play Button
+            AnimatedVisibility(
+                visible = !isRunning,
+                enter = slideInVertically(
+                    initialOffsetY = { it },
+                    animationSpec = tween(durationMillis = 300)
+                ),
+                exit = slideOutVertically(
+                    targetOffsetY = { it },
+                    animationSpec = tween(durationMillis = 300)
                 )
-            }
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .background(Color(0xFF050505))
-                    .clickable { timeLeft = totalTime; isRunning = false },
-                contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Filled.Refresh,
-                    contentDescription = "Reset",
-                    tint = Color.White,
-                    modifier = Modifier.size(32.dp)
-                )
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFF0A0A0A))
+                        .clickable { isRunning = true },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.PlayArrow,
+                        contentDescription = "Start",
+                        tint = Color.White,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
             }
+
+            AnimatedVisibility(
+                visible = isRunning,
+                enter = slideInVertically(
+                    initialOffsetY = { it },
+                    animationSpec = tween(durationMillis = 300)
+                ),
+                exit = slideOutVertically(
+                    targetOffsetY = { it },
+                    animationSpec = tween(durationMillis = 300)
+                )
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFF0A0A0A))
+                        .clickable { isRunning = false },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Pause",
+                        tint = themeColor,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+            }
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFF0A0A0A))
+                        .clickable { timeLeft = totalTime; isRunning = false },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Refresh,
+                        contentDescription = "Reset",
+                        tint = Color.White,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
         }
     }
 }
