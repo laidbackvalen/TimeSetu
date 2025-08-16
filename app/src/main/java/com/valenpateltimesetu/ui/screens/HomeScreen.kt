@@ -3,7 +3,9 @@ package com.valenpateltimesetu.ui.screens
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -25,8 +27,10 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
@@ -36,6 +40,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.valenpateltimesetu.ui.theme.backgroundColor
@@ -48,6 +53,20 @@ fun HomeScreen(modifier: Modifier = Modifier) {
     var totalTime by remember { mutableStateOf(25 * 60 * 1000L) }
     var timeLeft by remember { mutableStateOf(totalTime) }
     var isRunning by remember { mutableStateOf(false) }
+    var startAnimation by remember { mutableStateOf(false) }
+
+    val alphaAnim by animateFloatAsState(
+        targetValue = if (startAnimation) 1f else 0f,
+        animationSpec = tween(durationMillis = 1000)
+    )
+    val scaleAnim by animateFloatAsState(
+        targetValue = if (startAnimation) 1f else 0.8f,
+        animationSpec = tween(durationMillis = 1000)
+    )
+    val offsetX: Dp by animateDpAsState(
+        targetValue = if (startAnimation) 0.dp else (-300).dp,
+        animationSpec = tween(durationMillis = 1000)
+    )
 
     val infiniteTransition = rememberInfiniteTransition(label = "bounceAnim")
     val bounceScale by infiniteTransition.animateFloat(
@@ -62,6 +81,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 
 
     LaunchedEffect(isRunning) {
+        startAnimation = true
         while (isRunning && timeLeft > 0) {
             delay(1000)
             timeLeft -= 1000
@@ -81,6 +101,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize()
+            .alpha(alphaAnim)
+            .scale(scaleAnim)
             .background(color = backgroundColor)
             .statusBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -89,6 +111,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
+                .offset(offsetX)
                 .padding(top = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             contentPadding = PaddingValues(horizontal = 24.dp)
@@ -207,6 +230,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .fillMaxWidth()
                 .background(color = Color.Black)
+                .offset(offsetX)
                 .height(60.dp)
                 .padding(end = 16.dp, top = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.End),
