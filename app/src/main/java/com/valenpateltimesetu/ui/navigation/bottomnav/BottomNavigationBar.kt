@@ -1,5 +1,6 @@
 package com.valenpateltimesetu.ui.navigation.bottomnav
 
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.material3.Icon
@@ -25,7 +26,7 @@ fun BottomNavigationBar(navController: NavController) {
     var rotationAngle by remember { mutableStateOf(0f) }
     val animatedRotation by animateFloatAsState(
         targetValue = rotationAngle,
-        animationSpec = tween(durationMillis = 300),
+        animationSpec = tween(durationMillis = 500, easing = FastOutSlowInEasing),
         label = "rotation"
     )
 
@@ -42,6 +43,7 @@ fun BottomNavigationBar(navController: NavController) {
                 selected = selected,
                 onClick = {
                     if (isSettings) {
+                        // Rotate 360 degrees each time it's clicked
                         rotationAngle += 360f
                     }
                     navController.navigate(item.route) {

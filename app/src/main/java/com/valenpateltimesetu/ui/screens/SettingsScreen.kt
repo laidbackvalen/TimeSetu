@@ -92,14 +92,21 @@ fun SettingsScreen(navController: NavController) {
         },
         containerColor = backgroundColor
     ) { innerPadding ->
-        LazyColumn(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(horizontal = 20.dp),
-            contentPadding = PaddingValues(vertical = 20.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 20.dp),
+                contentPadding = PaddingValues(
+                    top = 20.dp,
+                    bottom = 80.dp // Extra padding for bottom navigation bar
+                ),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
             // About Section
             item {
                 SectionHeader("About")
@@ -180,6 +187,7 @@ fun SettingsScreen(navController: NavController) {
             item {
                 Spacer(modifier = Modifier.height(24.dp))
             }
+        }
         }
         
         // Version Dialog
