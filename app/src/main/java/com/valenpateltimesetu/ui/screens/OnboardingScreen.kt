@@ -316,7 +316,7 @@ fun OnboardingSlideContent(
         // Title with fade animation
         Text(
             text = slide.title,
-            fontSize = 48.sp,
+            fontSize = 35.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White,
             fontFamily = FontFamily.SansSerif,
@@ -638,11 +638,3 @@ fun GlassSkipButton(
         )
     }
 }
-
-data class Particle(
-    val x: Float,
-    val y: Float,
-    val size: Float,
-    val speed: Float,
-    val angle: Float
-)
