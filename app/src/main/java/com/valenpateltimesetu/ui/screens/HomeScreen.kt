@@ -17,6 +17,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
@@ -56,6 +57,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
@@ -183,7 +185,32 @@ fun ScrollableNumberPicker(
         modifier = modifier
             .height(200.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(Color(0xFF2A2A2A)),
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = 0.15f),
+                        Color.White.copy(alpha = 0.08f),
+                        Color.White.copy(alpha = 0.05f)
+                    )
+                ),
+                shape = RoundedCornerShape(16.dp)
+            )
+            .shadow(
+                elevation = 12.dp,
+                shape = RoundedCornerShape(16.dp),
+                spotColor = themeColor.copy(alpha = 0.2f)
+            )
+            .border(
+                width = 1.5.dp,
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = 0.3f),
+                        themeColor.copy(alpha = 0.4f),
+                        Color.White.copy(alpha = 0.2f)
+                    )
+                ),
+                shape = RoundedCornerShape(16.dp)
+            ),
         contentAlignment = Alignment.Center
     ) {
         // Selection highlight
@@ -192,7 +219,13 @@ fun ScrollableNumberPicker(
                 .fillMaxWidth()
                 .height(84.dp)
                 .background(
-                    color = themeColor.copy(alpha = 0.2f),
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            themeColor.copy(alpha = 0.3f),
+                            themeColor.copy(alpha = 0.2f),
+                            themeColor.copy(alpha = 0.15f)
+                        )
+                    ),
                     shape = RoundedCornerShape(8.dp)
                 )
         )
@@ -314,7 +347,16 @@ fun HomeScreen(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(color = backgroundColor)
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF0A0A0F),
+                        Color(0xFF1A1A2E),
+                        Color(0xFF16213E),
+                        backgroundColor
+                    )
+                )
+            )
             .alpha(alphaAnim)
             .scale(scaleAnim)
             .statusBarsPadding()
@@ -329,11 +371,48 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             contentPadding = PaddingValues(horizontal = 40.dp)
         ) {
             itemsIndexed(modes) { index, (label, time) ->
+                val isSelected = !isCustomTime && index == selectedIndex
                 Box(
                     modifier = Modifier
                         .clip(CircleShape)
                         .background(
-                            if (!isCustomTime && index == selectedIndex) Color(0xFFFF8C42) else Color.DarkGray
+                            brush = Brush.linearGradient(
+                                colors = if (isSelected) {
+                                    listOf(
+                                        themeColor.copy(alpha = 0.4f),
+                                        themeColor.copy(alpha = 0.6f)
+                                    )
+                                } else {
+                                    listOf(
+                                        Color.White.copy(alpha = 0.1f),
+                                        Color.White.copy(alpha = 0.05f)
+                                    )
+                                }
+                            ),
+                            shape = CircleShape
+                        )
+                        .blur(radius = 0.dp)
+                        .shadow(
+                            elevation = if (isSelected) 12.dp else 4.dp,
+                            shape = CircleShape,
+                            spotColor = if (isSelected) themeColor.copy(alpha = 0.5f) else Color.Transparent
+                        )
+                        .border(
+                            width = if (isSelected) 1.5.dp else 1.dp,
+                            brush = Brush.linearGradient(
+                                colors = if (isSelected) {
+                                    listOf(
+                                        Color.White.copy(alpha = 0.6f),
+                                        themeColor.copy(alpha = 0.8f)
+                                    )
+                                } else {
+                                    listOf(
+                                        Color.White.copy(alpha = 0.2f),
+                                        Color.White.copy(alpha = 0.1f)
+                                    )
+                                }
+                            ),
+                            shape = CircleShape
                         )
                         .clickable {
                             selectedIndex = index
@@ -351,8 +430,9 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 ) {
                     Text(
                         text = label,
-                        color = Color.White,
-                        fontSize = if (label.startsWith("5") || label.startsWith("15")) 14.sp else 16.sp
+                        color = if (isSelected) Color.White else Color.White.copy(alpha = 0.9f),
+                        fontSize = if (label.startsWith("5") || label.startsWith("15")) 14.sp else 16.sp,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
                     )
                 }
             }
@@ -363,7 +443,41 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .align(Alignment.Center)
         ) {
-            Box(contentAlignment = Alignment.Center, modifier = Modifier) {
+            // Glassmorphic container for timer
+            Box(
+                modifier = Modifier
+                    .size(340.dp)
+                    .clip(CircleShape)
+                    .background(
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                Color.White.copy(alpha = 0.15f),
+                                Color.White.copy(alpha = 0.05f),
+                                Color.Transparent
+                            )
+                        ),
+                        shape = CircleShape
+                    )
+                    .blur(radius = 0.dp)
+                    .shadow(
+                        elevation = 20.dp,
+                        shape = CircleShape,
+                        spotColor = themeColor.copy(alpha = 0.3f)
+                    )
+                    .border(
+                        width = 1.5.dp,
+                        brush = Brush.linearGradient(
+                            colors = listOf(
+                                Color.White.copy(alpha = 0.3f),
+                                themeColor.copy(alpha = 0.4f),
+                                Color.White.copy(alpha = 0.2f)
+                            )
+                        ),
+                        shape = CircleShape
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier) {
                 Canvas(
                     modifier = Modifier
                         .size(circleSize)
@@ -429,16 +543,35 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                         center = Offset(handleX, handleY)
                     )
                 }
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         "TimeSetu⏳",
                         color = Color.White,
                         fontSize = 16.sp,
                         modifier = Modifier
                             .clip(RoundedCornerShape(50))
-                            .background(color = Color.DarkGray)
+                            .background(
+                                brush = Brush.linearGradient(
+                                    colors = listOf(
+                                        Color.White.copy(alpha = 0.2f),
+                                        Color.White.copy(alpha = 0.1f)
+                                    )
+                                ),
+                                shape = RoundedCornerShape(50)
+                            )
+                            .border(
+                                width = 1.dp,
+                                brush = Brush.linearGradient(
+                                    colors = listOf(
+                                        Color.White.copy(alpha = 0.3f),
+                                        Color.White.copy(alpha = 0.1f)
+                                    )
+                                ),
+                                shape = RoundedCornerShape(50)
+                            )
                             .padding(horizontal = 12.dp, vertical = 4.dp),
-                        fontFamily = FontFamily.SansSerif
+                        fontFamily = FontFamily.SansSerif,
+                        fontWeight = FontWeight.Medium
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Box(
@@ -474,6 +607,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                             )
                         }
                     }
+                    }
                 }
             }
             
@@ -500,7 +634,30 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                         modifier = Modifier
                             .size(60.dp)
                             .clip(CircleShape)
-                            .background(Color(0xFF111111))
+                            .background(
+                                brush = Brush.radialGradient(
+                                    colors = listOf(
+                                        Color.White.copy(alpha = 0.25f),
+                                        Color.White.copy(alpha = 0.1f)
+                                    )
+                                ),
+                                shape = CircleShape
+                            )
+                            .shadow(
+                                elevation = 8.dp,
+                                shape = CircleShape,
+                                spotColor = themeColor.copy(alpha = 0.3f)
+                            )
+                            .border(
+                                width = 1.5.dp,
+                                brush = Brush.linearGradient(
+                                    colors = listOf(
+                                        Color.White.copy(alpha = 0.4f),
+                                        Color.White.copy(alpha = 0.2f)
+                                    )
+                                ),
+                                shape = CircleShape
+                            )
                             .clickable { isRunning = true },
                         contentAlignment = Alignment.Center
                     ) {
@@ -528,14 +685,37 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                         modifier = Modifier
                             .size(60.dp)
                             .clip(CircleShape)
-                            .background(Color(0xFF111111))
+                            .background(
+                                brush = Brush.radialGradient(
+                                    colors = listOf(
+                                        themeColor.copy(alpha = 0.3f),
+                                        themeColor.copy(alpha = 0.15f)
+                                    )
+                                ),
+                                shape = CircleShape
+                            )
+                            .shadow(
+                                elevation = 8.dp,
+                                shape = CircleShape,
+                                spotColor = themeColor.copy(alpha = 0.5f)
+                            )
+                            .border(
+                                width = 1.5.dp,
+                                brush = Brush.linearGradient(
+                                    colors = listOf(
+                                        themeColor.copy(alpha = 0.6f),
+                                        themeColor.copy(alpha = 0.4f)
+                                    )
+                                ),
+                                shape = CircleShape
+                            )
                             .clickable { isRunning = false },
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Close,
                             contentDescription = "Pause",
-                            tint = themeColor,
+                            tint = Color.White,
                             modifier = Modifier.size(32.dp)
                         )
                     }
@@ -544,7 +724,30 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     modifier = Modifier
                         .size(60.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFF111111))
+                        .background(
+                            brush = Brush.radialGradient(
+                                colors = listOf(
+                                    Color.White.copy(alpha = 0.25f),
+                                    Color.White.copy(alpha = 0.1f)
+                                )
+                            ),
+                            shape = CircleShape
+                        )
+                        .shadow(
+                            elevation = 8.dp,
+                            shape = CircleShape,
+                            spotColor = Color.White.copy(alpha = 0.2f)
+                        )
+                        .border(
+                            width = 1.5.dp,
+                            brush = Brush.linearGradient(
+                                colors = listOf(
+                                    Color.White.copy(alpha = 0.4f),
+                                    Color.White.copy(alpha = 0.2f)
+                                )
+                            ),
+                            shape = CircleShape
+                        )
                         .clickable { timeLeft = totalTime; isRunning = false },
                     contentAlignment = Alignment.Center
                 ) {
@@ -582,19 +785,55 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color.Black.copy(alpha = 0.6f))
+                        .background(
+                            Brush.radialGradient(
+                                colors = listOf(
+                                    Color.Black.copy(alpha = 0.8f),
+                                    Color.Black.copy(alpha = 0.6f)
+                                )
+                            )
+                        )
                         .clickable { showEditDialog = false },
                     contentAlignment = Alignment.Center
                 ) {
                     Card(
                         modifier = Modifier
                             .fillMaxWidth(0.85f)
-                            .shadow(16.dp, RoundedCornerShape(24.dp)),
+                            .shadow(
+                                elevation = 24.dp,
+                                shape = RoundedCornerShape(24.dp),
+                                spotColor = themeColor.copy(alpha = 0.3f)
+                            )
+                            .border(
+                                width = 1.5.dp,
+                                brush = Brush.linearGradient(
+                                    colors = listOf(
+                                        Color.White.copy(alpha = 0.3f),
+                                        themeColor.copy(alpha = 0.4f),
+                                        Color.White.copy(alpha = 0.2f)
+                                    )
+                                ),
+                                shape = RoundedCornerShape(24.dp)
+                            ),
                         shape = RoundedCornerShape(24.dp),
                         colors = CardDefaults.cardColors(
-                            containerColor = Color(0xFF1E1E1E)
+                            containerColor = Color.Transparent
                         )
                     ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(
+                                    brush = Brush.verticalGradient(
+                                        colors = listOf(
+                                            Color.White.copy(alpha = 0.15f),
+                                            Color.White.copy(alpha = 0.08f),
+                                            Color.White.copy(alpha = 0.05f)
+                                        )
+                                    ),
+                                    shape = RoundedCornerShape(24.dp)
+                                )
+                        ) {
                         Column(
                             modifier = Modifier
                                 .padding(24.dp),
@@ -669,55 +908,93 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(12.dp)
                             ) {
-                                OutlinedButton(
-                                    onClick = { showEditDialog = false },
-                                    modifier = Modifier.weight(1f),
-                                    colors = ButtonDefaults.outlinedButtonColors(
-                                        contentColor = Color.Gray
-                                    ),
-                                    border = androidx.compose.foundation.BorderStroke(
-                                        1.dp,
-                                        Color(0xFF404040)
-                                    ),
-                                    shape = RoundedCornerShape(12.dp)
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .background(
+                                            brush = Brush.linearGradient(
+                                                colors = listOf(
+                                                    Color.White.copy(alpha = 0.1f),
+                                                    Color.White.copy(alpha = 0.05f)
+                                                )
+                                            ),
+                                            shape = RoundedCornerShape(12.dp)
+                                        )
+                                        .border(
+                                            width = 1.5.dp,
+                                            brush = Brush.linearGradient(
+                                                colors = listOf(
+                                                    Color.White.copy(alpha = 0.3f),
+                                                    Color.White.copy(alpha = 0.2f)
+                                                )
+                                            ),
+                                            shape = RoundedCornerShape(12.dp)
+                                        )
+                                        .clickable { showEditDialog = false }
                                 ) {
                                     Text(
                                         "Cancel",
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.SemiBold,
-                                        modifier = Modifier.padding(vertical = 8.dp)
+                                        color = Color.White.copy(alpha = 0.9f),
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 12.dp),
+                                        textAlign = TextAlign.Center
                                     )
                                 }
                                 
-                                Button(
-                                    onClick = {
-                                        val newTime = (minutesInput * 60 + secondsInput) * 1000L
-                                        if (newTime > 0) {
-                                            totalTime = newTime
-                                            timeLeft = newTime
-                                            isRunning = false
-                                            // Reset selectedIndex to -1 if custom time doesn't match any mode
-                                            val matchingIndex = modes.indexOfFirst { it.second == newTime }
-                                            selectedIndex = if (matchingIndex >= 0) matchingIndex else -1
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .background(
+                                            brush = Brush.linearGradient(
+                                                colors = listOf(
+                                                    themeColor.copy(alpha = 0.8f),
+                                                    themeColor.copy(alpha = 0.6f)
+                                                )
+                                            ),
+                                            shape = RoundedCornerShape(12.dp)
+                                        )
+                                        .shadow(
+                                            elevation = 8.dp,
+                                            shape = RoundedCornerShape(12.dp),
+                                            spotColor = themeColor.copy(alpha = 0.5f)
+                                        )
+                                        .border(
+                                            width = 1.5.dp,
+                                            brush = Brush.linearGradient(
+                                                colors = listOf(
+                                                    Color.White.copy(alpha = 0.5f),
+                                                    themeColor.copy(alpha = 0.8f)
+                                                )
+                                            ),
+                                            shape = RoundedCornerShape(12.dp)
+                                        )
+                                        .clickable {
+                                            val newTime = (minutesInput * 60 + secondsInput) * 1000L
+                                            if (newTime > 0) {
+                                                totalTime = newTime
+                                                timeLeft = newTime
+                                                isRunning = false
+                                                // Reset selectedIndex to -1 if custom time doesn't match any mode
+                                                val matchingIndex = modes.indexOfFirst { it.second == newTime }
+                                                selectedIndex = if (matchingIndex >= 0) matchingIndex else -1
+                                            }
+                                            showEditDialog = false
                                         }
-                                        showEditDialog = false
-                                    },
-                                    modifier = Modifier.weight(1f),
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = themeColor,
-                                        contentColor = Color.White
-                                    ),
-                                    shape = RoundedCornerShape(12.dp),
-                                    elevation = ButtonDefaults.buttonElevation(
-                                        defaultElevation = 0.dp,
-                                        pressedElevation = 2.dp
-                                    )
                                 ) {
                                     Text(
                                         "Set",
                                         fontSize = 16.sp,
                                         fontWeight = FontWeight.Bold,
-                                        modifier = Modifier.padding(vertical = 8.dp)
+                                        color = Color.White,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 12.dp),
+                                        textAlign = TextAlign.Center
                                     )
                                 }
                             }
@@ -726,5 +1003,6 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 }
             }
         }
+    }
     }
 }
