@@ -12,6 +12,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -125,6 +126,22 @@ fun OnboardingScreen(navController: NavHostController) {
                 Brush.verticalGradient(blendedGradient)
             )
     ) {
+        // Skip button in top right corner
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 50.dp, end = 24.dp)
+        ) {
+            GlassSkipButton(
+                onClick = {
+                    preferencesManager.setOnboardingCompleted(true)
+                    navController.navigate("home") {
+                        popUpTo("onboarding") { inclusive = true }
+                    }
+                }
+            )
+        }
+        
         // Horizontal pager
         HorizontalPager(
             count = onboardingSlides.size,
@@ -158,7 +175,7 @@ fun OnboardingScreen(navController: NavHostController) {
                             .size(if (isActive) 10.dp else 8.dp)
                             .alpha(if (isActive) 1f else 0.4f)
                             .background(
-                                color = if (isActive) Color.White else Color.White.copy(alpha = 0.5f),
+                                color = if (isActive) themeColor else Color.White.copy(alpha = 0.5f),
                                 shape = CircleShape
                             )
                     )
@@ -196,7 +213,8 @@ fun OnboardingScreen(navController: NavHostController) {
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    showIcon = true
+                    showIcon = true,
+                    useThemeColor = true
                 )
             }
         }
@@ -275,29 +293,52 @@ fun GlassButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    showIcon: Boolean = false
+    showIcon: Boolean = false,
+    useThemeColor: Boolean = false
 ) {
+    val backgroundGradient = if (useThemeColor) {
+        Brush.linearGradient(
+            colors = listOf(
+                themeColor.copy(alpha = 0.4f),
+                themeColor.copy(alpha = 0.25f)
+            )
+        )
+    } else {
+        Brush.linearGradient(
+            colors = listOf(
+                Color.White.copy(alpha = 0.25f),
+                Color.White.copy(alpha = 0.15f)
+            )
+        )
+    }
+    
+    val borderGradient = if (useThemeColor) {
+        Brush.linearGradient(
+            colors = listOf(
+                themeColor.copy(alpha = 0.7f),
+                themeColor.copy(alpha = 0.4f)
+            )
+        )
+    } else {
+        Brush.linearGradient(
+            colors = listOf(
+                Color.White.copy(alpha = 0.5f),
+                Color.White.copy(alpha = 0.2f)
+            )
+        )
+    }
+    
     Button(
         onClick = onClick,
         modifier = modifier
             .height(56.dp)
             .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        Color.White.copy(alpha = 0.25f),
-                        Color.White.copy(alpha = 0.15f)
-                    )
-                ),
+                brush = backgroundGradient,
                 shape = RoundedCornerShape(16.dp)
             )
             .border(
                 width = 1.dp,
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        Color.White.copy(alpha = 0.5f),
-                        Color.White.copy(alpha = 0.2f)
-                    )
-                ),
+                brush = borderGradient,
                 shape = RoundedCornerShape(16.dp)
             ),
         colors = ButtonDefaults.buttonColors(
@@ -330,6 +371,50 @@ fun GlassButton(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun GlassSkipButton(
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .height(40.dp)
+            .width(80.dp)
+            .background(
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = 0.2f),
+                        Color.White.copy(alpha = 0.1f)
+                    )
+                ),
+                shape = RoundedCornerShape(20.dp)
+            )
+            .border(
+                width = 1.dp,
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = 0.4f),
+                        Color.White.copy(alpha = 0.2f)
+                    )
+                ),
+                shape = RoundedCornerShape(20.dp)
+            ),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.Transparent
+        ),
+        shape = RoundedCornerShape(20.dp),
+        contentPadding = PaddingValues(0.dp)
+    ) {
+        Text(
+            text = "Skip",
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
+            color = Color.White,
+            letterSpacing = 0.5.sp
+        )
     }
 }
 
