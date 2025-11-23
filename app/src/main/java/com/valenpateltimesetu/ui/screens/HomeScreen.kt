@@ -221,7 +221,7 @@ fun ScrollableNumberPicker(
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(60.dp)
+                        .height(65.dp)
                         .clickable { 
                             onValueChange(number)
                             isUpdatingScroll = true
@@ -231,7 +231,7 @@ fun ScrollableNumberPicker(
                                 isUpdatingScroll = false
                             }
                         }
-                        .padding(vertical = 12.dp),
+                        .padding(vertical = 10.dp),
                     style = TextStyle(
                         fontSize = if (isSelected) 40.sp else 28.sp,
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
@@ -453,7 +453,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                             fontSize = 40.sp,
                             style = MaterialTheme.typography.headlineMedium
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
+//                        Spacer(modifier = Modifier.width(8.dp))
                         Box(
                             modifier = Modifier
                                 .size(32.dp)
@@ -482,7 +482,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             Row(
                 modifier = Modifier
                     .offset(offsetX),
-                horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
+                horizontalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterHorizontally),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AnimatedVisibility(
@@ -498,7 +498,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(40.dp)
+                            .size(60.dp)
                             .clip(CircleShape)
                             .background(Color(0xFF111111))
                             .clickable { isRunning = true },
@@ -526,7 +526,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(40.dp)
+                            .size(60.dp)
                             .clip(CircleShape)
                             .background(Color(0xFF111111))
                             .clickable { isRunning = false },
@@ -542,7 +542,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 }
                 Box(
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(60.dp)
                         .clip(CircleShape)
                         .background(Color(0xFF111111))
                         .clickable { timeLeft = totalTime; isRunning = false },
