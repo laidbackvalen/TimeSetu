@@ -297,6 +297,20 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         "15 min" to 15 * 60 * 1000L
     )
     var selectedIndex by remember { mutableStateOf(1) }
+    
+    // Check if current time is custom (doesn't match any predefined mode)
+    val isCustomTime = !modes.any { it.second == totalTime }
+    
+    // Sync selectedIndex when totalTime changes to match a predefined mode
+    LaunchedEffect(totalTime) {
+        val matchingIndex = modes.indexOfFirst { it.second == totalTime }
+        if (matchingIndex >= 0) {
+            selectedIndex = matchingIndex
+        } else {
+            selectedIndex = -1
+        }
+    }
+    
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -319,7 +333,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     modifier = Modifier
                         .clip(CircleShape)
                         .background(
-                            if (index == selectedIndex) Color(0xFFFF8C42) else Color.DarkGray
+                            if (!isCustomTime && index == selectedIndex) Color(0xFFFF8C42) else Color.DarkGray
                         )
                         .clickable {
                             selectedIndex = index
@@ -427,14 +441,39 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                         fontFamily = FontFamily.SansSerif
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        "${(timeLeft / 1000) / 60}:${
-                            (timeLeft / 1000 % 60).toString().padStart(2, '0')
-                        }",
-                        color = Color.White,
-                        fontSize = 40.sp,
-                        style = MaterialTheme.typography.headlineMedium
-                    )
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            "${(timeLeft / 1000) / 60}:${
+                                (timeLeft / 1000 % 60).toString().padStart(2, '0')
+                            }",
+                            color = Color.White,
+                            fontSize = 40.sp,
+                            style = MaterialTheme.typography.headlineMedium
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Box(
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFF111111))
+                                .clickable { 
+                                    minutesInput = ((timeLeft / 1000) / 60).toInt()
+                                    secondsInput = ((timeLeft / 1000) % 60).toInt()
+                                    showEditDialog = true 
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Edit,
+                                contentDescription = "Edit Time",
+                                tint = Color.White,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
                 }
             }
             
@@ -512,25 +551,6 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     Icon(
                         imageVector = Icons.Filled.Refresh,
                         contentDescription = "Reset",
-                        tint = Color.White,
-                        modifier = Modifier.size(30.dp)
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFF111111))
-                        .clickable { 
-                            minutesInput = ((timeLeft / 1000) / 60).toInt()
-                            secondsInput = ((timeLeft / 1000) % 60).toInt()
-                            showEditDialog = true 
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Edit,
-                        contentDescription = "Edit Time",
                         tint = Color.White,
                         modifier = Modifier.size(30.dp)
                     )
@@ -676,6 +696,9 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                                             totalTime = newTime
                                             timeLeft = newTime
                                             isRunning = false
+                                            // Reset selectedIndex to -1 if custom time doesn't match any mode
+                                            val matchingIndex = modes.indexOfFirst { it.second == newTime }
+                                            selectedIndex = if (matchingIndex >= 0) matchingIndex else -1
                                         }
                                         showEditDialog = false
                                     },

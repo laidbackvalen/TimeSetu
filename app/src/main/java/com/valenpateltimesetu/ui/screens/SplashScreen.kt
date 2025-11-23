@@ -7,7 +7,9 @@ package com.valenpateltimesetu.ui.screens
     import androidx.compose.foundation.layout.Arrangement
     import androidx.compose.foundation.layout.Box
     import androidx.compose.foundation.layout.Column
+    import androidx.compose.foundation.layout.Spacer
     import androidx.compose.foundation.layout.fillMaxSize
+    import androidx.compose.foundation.layout.height
     import androidx.compose.foundation.layout.offset
     import androidx.compose.foundation.layout.padding
     import androidx.compose.material3.Text
@@ -21,9 +23,10 @@ package com.valenpateltimesetu.ui.screens
     import androidx.compose.ui.Modifier
     import androidx.compose.ui.draw.alpha
     import androidx.compose.ui.draw.scale
-    import androidx.compose.ui.text.font.FontFamily
-    import androidx.compose.ui.text.font.FontWeight
-    import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
     import androidx.compose.ui.unit.sp
     import androidx.navigation.NavHostController
     import androidx.compose.ui.graphics.Color
@@ -73,22 +76,22 @@ package com.valenpateltimesetu.ui.screens
             ) {
                 Column(
                     modifier = Modifier.padding(top = 100.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(modifier = Modifier.offset(x = offsetX),
                         text="Minimal Distraction, Maximum Results!",
                         color = Color.White,
-                        fontSize = 38.sp,
+                        fontSize = 45.sp,
                         fontWeight = FontWeight.Bold,
                         fontFamily = FontFamily.SansSerif,
                         lineHeight = 35.sp
                     )
-//                    Spacer(modifier = Modifier.height(5.dp))
-                    Text(modifier = Modifier.offset(x = offsetX),
-                        text ="Master your time with the Pomodoro method.",
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Text(
+                        modifier = Modifier.offset(x = offsetX),
+                        text = "Master your time with the Pomodoro method.",
                         color = Color.White,
-                        fontSize = 18.sp,
-                        fontFamily = FontFamily.SansSerif
+                        fontSize = 25.sp,
+                        fontFamily = FontFamily.SansSerif,
                     )
                 }
                 Text(
