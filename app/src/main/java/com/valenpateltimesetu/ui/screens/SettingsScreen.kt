@@ -38,6 +38,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import android.widget.Toast
+import com.valenpateltimesetu.data.PreferencesManager
 import com.valenpateltimesetu.ui.theme.backgroundColor
 import com.valenpateltimesetu.ui.theme.themeColor
 
@@ -46,6 +47,7 @@ import com.valenpateltimesetu.ui.theme.themeColor
 @Composable
 fun SettingsScreen(navController: NavController) {
     val context = LocalContext.current
+    val preferencesManager = remember { PreferencesManager(context) }
     var showVersionDialog by remember { mutableStateOf(false) }
     var showFeedbackDialog by remember { mutableStateOf(false) }
 
@@ -156,6 +158,21 @@ fun SettingsScreen(navController: NavController) {
             item {
                 Spacer(modifier = Modifier.height(8.dp))
                 SectionHeader("Engagement")
+            }
+            
+            item {
+                ModernSettingItem(
+                    icon = Icons.Default.Info,
+                    title = "Show Tutorial",
+                    subtitle = "Learn how to use the app",
+                    iconColor = themeColor,
+                    onClick = {
+                        preferencesManager.resetTutorial()
+                        navController.navigate("home") {
+                            popUpTo("settings") { inclusive = false }
+                        }
+                    }
+                )
             }
             
             item {

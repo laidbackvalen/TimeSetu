@@ -45,6 +45,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.SideEffect
 import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,6 +54,7 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.zIndex
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.geometry.Offset
@@ -61,6 +63,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -68,8 +71,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalContext
+import android.util.Log
+import com.valenpateltimesetu.data.PreferencesManager
 import com.valenpateltimesetu.ui.theme.backgroundColor
 import com.valenpateltimesetu.ui.theme.themeColor
+import com.valenpateltimesetu.ui.tutorial.TutorialOverlay
+import com.valenpateltimesetu.ui.tutorial.TutorialStep
+import com.valenpateltimesetu.ui.tutorial.rememberTutorialState
 import kotlinx.coroutines.delay
 import kotlin.math.*
 
@@ -277,6 +286,10 @@ fun ScrollableNumberPicker(
 
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    val preferencesManager = remember { PreferencesManager(context) }
+    val density = LocalDensity.current
+    
     var totalTime by remember { mutableStateOf(25 * 60 * 1000L) }
     var timeLeft by remember { mutableStateOf(totalTime) }
     var isRunning by remember { mutableStateOf(false) }
@@ -284,6 +297,61 @@ fun HomeScreen(modifier: Modifier = Modifier) {
     var showEditDialog by remember { mutableStateOf(false) }
     var minutesInput by remember { mutableStateOf(0) }
     var secondsInput by remember { mutableStateOf(0) }
+    
+    // Tutorial state - FORCE SHOW for testing
+    var showTutorial by remember { mutableStateOf(true) } // Force show for testing
+    // var showTutorial by remember { mutableStateOf(!preferencesManager.isTutorialCompleted()) } // Original
+    var tutorialStep by remember { mutableStateOf(0) }
+    var timerPosition by remember { mutableStateOf<Offset?>(null) }
+    var timerSize by remember { mutableStateOf<Size?>(null) }
+    var modeSelectorPosition by remember { mutableStateOf<Offset?>(null) }
+    var modeSelectorSize by remember { mutableStateOf<Size?>(null) }
+    var playButtonPosition by remember { mutableStateOf<Offset?>(null) }
+    var playButtonSize by remember { mutableStateOf<Size?>(null) }
+    
+    // Debug logging
+    LaunchedEffect(showTutorial) {
+        Log.d("Tutorial", "showTutorial = $showTutorial")
+        Log.d("Tutorial", "tutorialStep = $tutorialStep")
+        Log.d("Tutorial", "isTutorialCompleted = ${preferencesManager.isTutorialCompleted()}")
+    }
+    
+    // Ensure tutorial shows after layout is complete
+    LaunchedEffect(showTutorial) {
+        if (showTutorial) {
+            Log.d("Tutorial", "Waiting for positions...")
+            // Wait a bit for positions to be captured
+            delay(800)
+            Log.d("Tutorial", "Timer position: $timerPosition, size: $timerSize")
+            Log.d("Tutorial", "Mode selector position: $modeSelectorPosition, size: $modeSelectorSize")
+            Log.d("Tutorial", "Play button position: $playButtonPosition, size: $playButtonSize")
+        }
+    }
+    
+    val tutorialSteps = remember(timerPosition, timerSize, modeSelectorPosition, modeSelectorSize, playButtonPosition, playButtonSize) {
+        val steps = listOf(
+            TutorialStep(
+                title = "Welcome to TimeSetu!",
+                description = "This is your timer. You can drag the orange handle around the circle to adjust the time.",
+                targetPosition = timerPosition,
+                targetSize = timerSize
+            ),
+            TutorialStep(
+                title = "Select Time Mode",
+                description = "Choose from preset time modes (5 min, 25 min, 15 min) or create your own custom time.",
+                targetPosition = modeSelectorPosition,
+                targetSize = modeSelectorSize
+            ),
+            TutorialStep(
+                title = "Start Your Session",
+                description = "Tap the play button to start your Pomodoro session. Focus and stay productive!",
+                targetPosition = playButtonPosition,
+                targetSize = playButtonSize
+            )
+        )
+        Log.d("Tutorial", "tutorialSteps created: size=${steps.size}, step0 position=${steps[0].targetPosition}, step1 position=${steps[1].targetPosition}, step2 position=${steps[2].targetPosition}")
+        steps
+    }
 
     val alphaAnim by animateFloatAsState(
         targetValue = if (startAnimation) 1f else 0f,
@@ -366,7 +434,14 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 .fillMaxWidth()
                 .offset(offsetX)
                 .padding(top = 20.dp)
-                .align(Alignment.TopCenter),
+                .align(Alignment.TopCenter)
+                .onGloballyPositioned { coordinates ->
+                    val position = coordinates.localToRoot(Offset.Zero)
+                    val size = coordinates.size
+                    modeSelectorPosition = position
+                    modeSelectorSize = Size(size.width.toFloat(), size.height.toFloat())
+                    Log.d("Tutorial", "Mode selector positioned: $position, size: ${size.width}x${size.height}")
+                },
             horizontalArrangement = Arrangement.SpaceBetween,
             contentPadding = PaddingValues(horizontal = 40.dp)
         ) {
@@ -447,6 +522,13 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             Box(
                 modifier = Modifier
                     .size(340.dp)
+                    .onGloballyPositioned { coordinates ->
+                        val position = coordinates.localToRoot(Offset.Zero)
+                        val size = coordinates.size
+                        timerPosition = position
+                        timerSize = Size(size.width.toFloat(), size.height.toFloat())
+                        Log.d("Tutorial", "Timer positioned: $position, size: ${size.width}x${size.height}")
+                    }
                     .clip(CircleShape)
                     .background(
                         brush = Brush.radialGradient(
@@ -727,6 +809,13 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     Box(
                         modifier = Modifier
                             .size(60.dp)
+                            .onGloballyPositioned { coordinates ->
+                                val position = coordinates.localToRoot(Offset.Zero)
+                                val size = coordinates.size
+                                playButtonPosition = position
+                                playButtonSize = Size(size.width.toFloat(), size.height.toFloat())
+                                Log.d("Tutorial", "Play button positioned: $position, size: ${size.width}x${size.height}")
+                            }
                             .clip(CircleShape)
                             .background(
                                 brush = Brush.radialGradient(
@@ -852,6 +941,47 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                         modifier = Modifier.size(30.dp)
                     )
                 }
+            }
+        }
+        
+        // Tutorial overlay - show even if positions aren't available yet
+        // Place it at the end to ensure it's on top of everything
+        val shouldShowTutorial = showTutorial && tutorialStep < tutorialSteps.size
+        
+        SideEffect {
+            Log.d("Tutorial", "SideEffect: shouldShowTutorial=$shouldShowTutorial (showTutorial=$showTutorial, tutorialStep=$tutorialStep, tutorialSteps.size=${tutorialSteps.size})")
+        }
+        
+        LaunchedEffect(showTutorial, tutorialStep, tutorialSteps.size) {
+            Log.d("Tutorial", "LaunchedEffect: Checking tutorial display: showTutorial=$showTutorial, step=$tutorialStep, stepsSize=${tutorialSteps.size}, condition=$shouldShowTutorial")
+        }
+        
+        if (shouldShowTutorial) {
+            SideEffect {
+                Log.d("Tutorial", "Rendering TutorialOverlay with step $tutorialStep")
+            }
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .zIndex(1000f) // Ensure tutorial is on top
+            ) {
+                TutorialOverlay(
+                    steps = tutorialSteps,
+                    currentStep = tutorialStep,
+                    onNext = {
+                        if (tutorialStep < tutorialSteps.size - 1) {
+                            tutorialStep++
+                        } else {
+                            showTutorial = false
+                            preferencesManager.setTutorialCompleted(true)
+                        }
+                    },
+                    onSkip = {
+                        showTutorial = false
+                        preferencesManager.setTutorialCompleted(true)
+                    },
+                    modifier = Modifier.fillMaxSize()
+                )
             }
         }
     }
@@ -1097,6 +1227,6 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 }
             }
         }
-    }
+        }
     }
 }
