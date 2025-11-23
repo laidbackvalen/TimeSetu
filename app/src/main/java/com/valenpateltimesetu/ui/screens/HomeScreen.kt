@@ -508,13 +508,46 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                         } 
                 ) {
                     val center = Offset(size.width / 2, size.height / 2)
+                    
+                    // Glassmorphic background circle with gradient
                     drawCircle(
-                        color = Color.Black,
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                Color.White.copy(alpha = 0.2f),
+                                Color.White.copy(alpha = 0.1f),
+                                Color.Black.copy(alpha = 0.3f),
+                                Color.Black.copy(alpha = 0.5f)
+                            ),
+                            center = center,
+                            radius = radiusPx
+                        ),
                         radius = radiusPx
                     )
+                    
+                    // Outer glass border
+                    drawCircle(
+                        brush = Brush.linearGradient(
+                            colors = listOf(
+                                Color.White.copy(alpha = 0.4f),
+                                themeColor.copy(alpha = 0.3f),
+                                Color.White.copy(alpha = 0.2f)
+                            )
+                        ),
+                        radius = radiusPx,
+                        style = Stroke(width = 2f)
+                    )
+                    
                     val sweepAngle = (timeLeft.toFloat() / totalTime) * 360f
+                    
+                    // Glassmorphic progress arc with linear gradient
                     drawArc(
-                        color = Color(0xFFFF8C42),
+                        brush = Brush.linearGradient(
+                            colors = listOf(
+                                themeColor.copy(alpha = 0.9f),
+                                themeColor,
+                                themeColor.copy(alpha = 0.8f)
+                            )
+                        ),
                         startAngle = -90f,
                         sweepAngle = sweepAngle,
                         useCenter = false,
@@ -522,10 +555,35 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                         size = Size(radiusPx * 2, radiusPx * 2),
                         style = Stroke(width = 20f)
                     )
+                    
+                    // Inner glow for progress arc
+                    drawArc(
+                        brush = Brush.linearGradient(
+                            colors = listOf(
+                                themeColor.copy(alpha = 0.4f),
+                                themeColor.copy(alpha = 0.2f),
+                                Color.Transparent
+                            )
+                        ),
+                        startAngle = -90f,
+                        sweepAngle = sweepAngle,
+                        useCenter = false,
+                        topLeft = Offset(center.x - radiusPx, center.y - radiusPx),
+                        size = Size(radiusPx * 2, radiusPx * 2),
+                        style = Stroke(width = 8f)
+                    )
 
                     val elapsedAngle = 360f - sweepAngle
+                    
+                    // Glassmorphic elapsed arc
                     drawArc(
-                        color = Color.Black,
+                        brush = Brush.linearGradient(
+                            colors = listOf(
+                                Color.White.copy(alpha = 0.15f),
+                                Color.White.copy(alpha = 0.1f),
+                                Color.Black.copy(alpha = 0.2f)
+                            )
+                        ),
                         startAngle = -90f + sweepAngle,
                         sweepAngle = elapsedAngle,
                         useCenter = false,
@@ -537,10 +595,46 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     val handleAngle = Math.toRadians(sweepAngle.toDouble() - 90)
                     val handleX = center.x + radiusPx * cos(handleAngle).toFloat()
                     val handleY = center.y + radiusPx * sin(handleAngle).toFloat()
+                    
+                    // Glassmorphic handle with glow
+                    // Outer glow
                     drawCircle(
-                        color = Color(0xFFFF8C42),
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                themeColor.copy(alpha = 0.3f),
+                                Color.Transparent
+                            ),
+                            radius = 40f
+                        ),
+                        radius = 40f,
+                        center = Offset(handleX, handleY)
+                    )
+                    
+                    // Main handle circle
+                    drawCircle(
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                themeColor.copy(alpha = 1f),
+                                themeColor.copy(alpha = 0.8f),
+                                themeColor.copy(alpha = 0.6f)
+                            ),
+                            radius = 30f
+                        ),
                         radius = 30f,
                         center = Offset(handleX, handleY)
+                    )
+                    
+                    // Inner highlight
+                    drawCircle(
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                Color.White.copy(alpha = 0.4f),
+                                Color.Transparent
+                            ),
+                            radius = 15f
+                        ),
+                        radius = 15f,
+                        center = Offset(handleX - 8f, handleY - 8f)
                     )
                 }
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
