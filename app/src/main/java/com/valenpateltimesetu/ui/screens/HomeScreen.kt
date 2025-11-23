@@ -441,36 +441,36 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                         fontFamily = FontFamily.SansSerif
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
+                    Box(
+                        modifier = Modifier
+                            .clickable {
+                                minutesInput = ((timeLeft / 1000) / 60).toInt()
+                                secondsInput = ((timeLeft / 1000) % 60).toInt()
+                                showEditDialog = true
+                            },
+                        contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            "${(timeLeft / 1000) / 60}:${
-                                (timeLeft / 1000 % 60).toString().padStart(2, '0')
-                            }",
-                            color = Color.White,
-                            fontSize = 40.sp,
-                            style = MaterialTheme.typography.headlineMedium
-                        )
-//                        Spacer(modifier = Modifier.width(8.dp))
-                        Box(
-                            modifier = Modifier
-                                .size(32.dp)
-                                .clip(CircleShape)
-                                .background(Color(0xFF111111))
-                                .clickable { 
-                                    minutesInput = ((timeLeft / 1000) / 60).toInt()
-                                    secondsInput = ((timeLeft / 1000) % 60).toInt()
-                                    showEditDialog = true 
-                                },
-                            contentAlignment = Alignment.Center
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
+                            Text(
+                                "${(timeLeft / 1000) / 60}:${
+                                    (timeLeft / 1000 % 60).toString().padStart(2, '0')
+                                }",
+                                color = Color.White,
+                                fontSize = 60.sp,
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.headlineMedium
+                            )
+                            Spacer(modifier = Modifier.width(2.dp))
                             Icon(
                                 imageVector = Icons.Filled.Edit,
                                 contentDescription = "Edit Time",
-                                tint = Color.White,
-                                modifier = Modifier.size(20.dp)
+                                tint = Color(0xFFFF8C42),
+                                modifier = Modifier
+                                    .size(30.dp)
+                                    .offset(y = 6.dp)
                             )
                         }
                     }
