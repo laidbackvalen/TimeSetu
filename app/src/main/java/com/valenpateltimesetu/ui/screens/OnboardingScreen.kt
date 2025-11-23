@@ -1,6 +1,7 @@
 package com.valenpateltimesetu.ui.screens
 
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -12,7 +13,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -20,6 +20,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -37,11 +39,14 @@ import com.valenpateltimesetu.ui.theme.backgroundColor
 import com.valenpateltimesetu.ui.theme.themeColor
 import kotlinx.coroutines.launch
 import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.sin
 
 data class OnboardingSlide(
     val title: String,
     val subtitle: String,
     val description: String,
+    val icon: String,
     val backgroundGradient: List<Color>
 )
 
@@ -50,6 +55,7 @@ val onboardingSlides = listOf(
         title = "Welcome to TimeSetu",
         subtitle = "Productivity Redefined",
         description = "Master your time with precision. Focus deeply, work efficiently, achieve consistently.",
+        icon = "⏳",
         backgroundGradient = listOf(
             Color(0xFF0A0A0F),
             Color(0xFF1A1A2E),
@@ -60,6 +66,7 @@ val onboardingSlides = listOf(
         title = "Focus Sessions",
         subtitle = "Deep Work Mode",
         description = "Structured intervals designed for maximum concentration and sustained productivity.",
+        icon = "🎯",
         backgroundGradient = listOf(
             Color(0xFF0F1A2E),
             Color(0xFF1A1A2E),
@@ -70,6 +77,7 @@ val onboardingSlides = listOf(
         title = "Track Progress",
         subtitle = "Build Better Habits",
         description = "Monitor your productivity and build better habits. Every session counts towards your goals.",
+        icon = "📊",
         backgroundGradient = listOf(
             Color(0xFF1A0F2E),
             Color(0xFF0F1A2E),
@@ -80,6 +88,7 @@ val onboardingSlides = listOf(
         title = "Ready to Start?",
         subtitle = "Begin Your Journey",
         description = "Transform how you manage time. Start your first session and experience the difference.",
+        icon = "🚀",
         backgroundGradient = listOf(
             Color(0xFF1A0F2E),
             Color(0xFF0F1A2E),
@@ -126,6 +135,12 @@ fun OnboardingScreen(navController: NavHostController) {
                 Brush.verticalGradient(blendedGradient)
             )
     ) {
+        // Animated background particles
+        AnimatedBackgroundParticles(currentPage + abs(currentPageOffset))
+        
+        // Animated gradient orbs
+        AnimatedGradientOrbs(currentPage + abs(currentPageOffset))
+        
         // Skip button in top right corner
         Box(
             modifier = Modifier
@@ -160,24 +175,20 @@ fun OnboardingScreen(navController: NavHostController) {
         Column(
             modifier = Modifier
                 .align(Alignment.Center)
-                .offset(y = 120.dp),
+                .offset(y = 220.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 repeat(onboardingSlides.size) { index ->
                     val pageOffset = abs((currentPage + currentPageOffset) - index)
                     val isActive = pageOffset < 0.5f
-                    
-                    Box(
-                        modifier = Modifier
-                            .size(if (isActive) 10.dp else 8.dp)
-                            .alpha(if (isActive) 1f else 0.4f)
-                            .background(
-                                color = if (isActive) themeColor else Color.White.copy(alpha = 0.5f),
-                                shape = CircleShape
-                            )
+
+                    // Animated indicator
+                    AnimatedIndicator(
+                        isActive = isActive,
+                        pageOffset = pageOffset
                     )
                 }
             }
@@ -240,6 +251,31 @@ fun OnboardingSlideContent(
     
     val horizontalOffset = pageOffset * 50f
     
+    // Staggered animations for text elements
+    val titleAlpha by animateFloatAsState(
+        targetValue = if (alpha > 0.5f) alpha else 0f,
+        animationSpec = tween(durationMillis = 600, easing = FastOutSlowInEasing),
+        label = "titleAlpha"
+    )
+    
+    val subtitleAlpha by animateFloatAsState(
+        targetValue = if (alpha > 0.7f) alpha else 0f,
+        animationSpec = tween(durationMillis = 600, delayMillis = 100, easing = FastOutSlowInEasing),
+        label = "subtitleAlpha"
+    )
+    
+    val descriptionAlpha by animateFloatAsState(
+        targetValue = if (alpha > 0.8f) alpha else 0f,
+        animationSpec = tween(durationMillis = 600, delayMillis = 200, easing = FastOutSlowInEasing),
+        label = "descriptionAlpha"
+    )
+    
+    val iconScale by animateFloatAsState(
+        targetValue = if (alpha > 0.5f) 1f else 0.8f,
+        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+        label = "iconScale"
+    )
+    
     Column(
         modifier = modifier
             .alpha(alpha)
@@ -249,7 +285,35 @@ fun OnboardingSlideContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Title
+        // Animated icon with pulse
+        Box(
+            modifier = Modifier
+                .scale(iconScale)
+                .padding(bottom = 40.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            // Glow effect behind icon
+            Box(
+                modifier = Modifier
+                    .size(80.dp)
+                    .background(
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                themeColor.copy(alpha = 0.2f),
+                                themeColor.copy(alpha = 0.0f)
+                            )
+                        ),
+                        shape = CircleShape
+                    )
+            )
+            Text(
+                text = slide.icon,
+                fontSize = 60.sp,
+                modifier = Modifier.scale(iconScale)
+            )
+        }
+        
+        // Title with fade animation
         Text(
             text = slide.title,
             fontSize = 48.sp,
@@ -258,10 +322,12 @@ fun OnboardingSlideContent(
             fontFamily = FontFamily.SansSerif,
             textAlign = TextAlign.Center,
             lineHeight = 45.sp,
-            modifier = Modifier.padding(bottom = 20.dp)
+            modifier = Modifier
+                .padding(bottom = 20.dp)
+                .alpha(titleAlpha)
         )
         
-        // Subtitle
+        // Subtitle with fade animation
         Text(
             text = slide.subtitle,
             fontSize = 18.sp,
@@ -270,10 +336,12 @@ fun OnboardingSlideContent(
             fontFamily = FontFamily.SansSerif,
             textAlign = TextAlign.Center,
             letterSpacing = 1.sp,
-            modifier = Modifier.padding(bottom = 15.dp)
+            modifier = Modifier
+                .padding(bottom = 15.dp)
+                .alpha(subtitleAlpha)
         )
         
-        // Description
+        // Description with fade animation
         Text(
             text = slide.description,
             fontSize = 16.sp,
@@ -283,7 +351,160 @@ fun OnboardingSlideContent(
             textAlign = TextAlign.Center,
             lineHeight = 24.sp,
             letterSpacing = 0.3.sp,
-            modifier = Modifier.fillMaxWidth(0.85f).padding(bottom = 150.dp)
+            modifier = Modifier
+                .fillMaxWidth(0.85f)
+                .padding(bottom = 150.dp)
+                .alpha(descriptionAlpha)
+        )
+    }
+}
+
+@Composable
+fun AnimatedIndicator(
+    isActive: Boolean,
+    pageOffset: Float
+) {
+    val scale by animateFloatAsState(
+        targetValue = if (isActive) 1.3f else 1f,
+        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+        label = "indicatorScale"
+    )
+    
+    val alpha by animateFloatAsState(
+        targetValue = if (isActive) 1f else 0.4f,
+        animationSpec = tween(durationMillis = 300),
+        label = "indicatorAlpha"
+    )
+    
+    Box(
+        modifier = Modifier
+            .size(if (isActive) 10.dp else 8.dp)
+            .scale(scale)
+            .alpha(alpha)
+            .background(
+                color = if (isActive) themeColor else Color.White.copy(alpha = 0.5f),
+                shape = CircleShape
+            )
+    )
+}
+
+@Composable
+fun AnimatedBackgroundParticles(currentPage: Float) {
+    val particles = remember {
+        (0..30).map {
+            Particle(
+                x = kotlin.random.Random.nextFloat(),
+                y = kotlin.random.Random.nextFloat(),
+                size = kotlin.random.Random.nextFloat() * 4f + 2f,
+                speed = kotlin.random.Random.nextFloat() * 0.4f + 0.1f,
+                angle = kotlin.random.Random.nextFloat() * 360f
+            )
+        }
+    }
+    
+    val infiniteTransition = rememberInfiniteTransition(label = "particles")
+    val time by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 8000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "time"
+    )
+    
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        val width = size.width
+        val height = size.height
+        
+        particles.forEach { particle ->
+            val newX = (particle.x + cos(Math.toRadians(particle.angle.toDouble())).toFloat() * particle.speed * time) % 1f
+            val newY = (particle.y + sin(Math.toRadians(particle.angle.toDouble())).toFloat() * particle.speed * time) % 1f
+            
+            val xPos = if (newX < 0) newX + 1f else newX
+            val yPos = if (newY < 0) newY + 1f else newY
+            
+            drawCircle(
+                color = themeColor.copy(alpha = 0.15f),
+                radius = particle.size,
+                center = Offset(xPos * width, yPos * height)
+            )
+        }
+    }
+}
+
+@Composable
+fun AnimatedGradientOrbs(currentPage: Float) {
+    val infiniteTransition = rememberInfiniteTransition(label = "orbs")
+    
+    val orb1X by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 15000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "orb1X"
+    )
+    
+    val orb1Y by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 12000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "orb1Y"
+    )
+    
+    val orb2X by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 18000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "orb2X"
+    )
+    
+    val orb2Y by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 14000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "orb2Y"
+    )
+    
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        val width = size.width
+        val height = size.height
+        
+        // First orb
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(
+                    themeColor.copy(alpha = 0.1f),
+                    themeColor.copy(alpha = 0.0f)
+                ),
+                radius = 200f
+            ),
+            radius = 200f,
+            center = Offset(orb1X * width * 0.7f, orb1Y * height * 0.6f)
+        )
+        
+        // Second orb
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(
+                    Color.White.copy(alpha = 0.05f),
+                    Color.White.copy(alpha = 0.0f)
+                ),
+                radius = 150f
+            ),
+            radius = 150f,
+            center = Offset(orb2X * width * 0.8f + width * 0.2f, orb2Y * height * 0.7f)
         )
     }
 }
@@ -418,3 +639,10 @@ fun GlassSkipButton(
     }
 }
 
+data class Particle(
+    val x: Float,
+    val y: Float,
+    val size: Float,
+    val speed: Float,
+    val angle: Float
+)
