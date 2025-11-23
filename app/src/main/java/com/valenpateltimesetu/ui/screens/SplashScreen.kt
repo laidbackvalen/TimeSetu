@@ -59,9 +59,9 @@ package com.valenpateltimesetu.ui.screens
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .background(color = Color(0xFFFF8C42))
                 .alpha(alphaAnim)
-                .scale(scaleAnim)
-               .background(color = Color(0xFFFF8C42)),
+                .scale(scaleAnim),
             contentAlignment = Alignment.Center
         ) {
             Column(
