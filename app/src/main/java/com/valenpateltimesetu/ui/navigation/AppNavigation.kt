@@ -14,14 +14,17 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.valenpateltimesetu.ui.navigation.bottomnav.BottomNavigationBar
 import com.valenpateltimesetu.ui.screens.HomeScreen
+import com.valenpateltimesetu.ui.screens.PrivacyPolicyScreen
 import com.valenpateltimesetu.ui.screens.SettingsScreen
 import com.valenpateltimesetu.ui.screens.SplashScreen
+import com.valenpateltimesetu.ui.screens.TermsConditionsScreen
+import com.valenpateltimesetu.ui.screens.UserGuideScreen
 import com.valenpateltimesetu.ui.theme.backgroundColor
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-    val showBottomBar = currentRoute != "splash"
+    val showBottomBar = currentRoute != "splash" && currentRoute != "privacy_policy" && currentRoute != "terms_conditions" && currentRoute != "user_guide"
 
     Scaffold(
         bottomBar = {
@@ -46,7 +49,10 @@ fun AppNavigation() {
             ) {
                 composable("splash") { SplashScreen(navController) }
                 composable("home") { HomeScreen() }
-                composable("settings") { SettingsScreen() }
+                composable("settings") { SettingsScreen(navController) }
+                composable("privacy_policy") { PrivacyPolicyScreen(navController) }
+                composable("terms_conditions") { TermsConditionsScreen(navController) }
+                composable("user_guide") { UserGuideScreen(navController) }
             }
         }
     }
