@@ -10,9 +10,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.text.TextStyle
 import com.valenpateltimesetu.ui.theme.backgroundColor
 
 
@@ -29,33 +31,77 @@ fun SettingsScreen() {
                 title = { Text("Settings") },
                 scrollBehavior = scrollBehavior,
                 colors = TopAppBarDefaults.largeTopAppBarColors(
-                    containerColor = backgroundColor,
+                    containerColor = Color.Black,
+                    scrolledContainerColor = Color.Black,
                     titleContentColor = Color.White
                 )
             )
         },
         containerColor = backgroundColor
     ) { innerPadding ->
-        LazyColumn(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(innerPadding)
         ) {
-            item {
-                Text(
-                    "About",
-                    fontSize = 18.sp,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold
-                )
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp),
+                contentPadding = PaddingValues(vertical = 16.dp, horizontal = 0.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                item {
+                    Text(
+                        "About",
+                        fontSize = 18.sp,
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                items(listOf("Version", "App Support", "Privacy Policy", "Terms & Condition", "Rate Us", "Feedback")) { setting ->
+                    SettingItem(setting)
+                }
             }
-            items(listOf("Version", "App Support", "Privacy Policy", "Terms & Condition", "Rate Us", "Feedback")) { setting ->
-                SettingItem(setting)
+            
+            // Footer at the bottom
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp, bottom = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                    Text(
+                        text = "Crafted by Nullscape",
+                        style = TextStyle(
+                            color = Color.White.copy(alpha = 0.7f),
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            letterSpacing = 0.8.sp
+                        ),
+                        textAlign = TextAlign.Center
+                    )
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "🇮🇳",
+                        fontSize = 16.sp,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                        Text(
+                            text = "Made in India",
+                            style = TextStyle(
+                                color = Color.White.copy(alpha = 0.6f),
+                                fontSize = 12.sp,
+                                letterSpacing = 0.5.sp
+                            )
+                        )
+                }
             }
-
-
         }
     }
 }
