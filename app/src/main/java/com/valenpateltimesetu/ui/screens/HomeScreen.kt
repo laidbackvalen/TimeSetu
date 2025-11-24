@@ -293,7 +293,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
     var totalTime by remember { mutableStateOf(25 * 60 * 1000L) }
     var timeLeft by remember { mutableStateOf(totalTime) }
     var isRunning by remember { mutableStateOf(false) }
-    var startAnimation by remember { mutableStateOf(false) }
+    var startAnimation by remember { mutableStateOf(true) } // Start with true to show background immediately
     var showEditDialog by remember { mutableStateOf(false) }
     var minutesInput by remember { mutableStateOf(0) }
     var secondsInput by remember { mutableStateOf(0) }
@@ -388,10 +388,6 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         label = "bounceScale"
     )
 
-    LaunchedEffect(Unit) {
-        startAnimation = true
-    }
-
     LaunchedEffect(isRunning) {
         while (isRunning && timeLeft > 0) {
             delay(1000)
@@ -423,9 +419,17 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         }
     }
     
+    // Blur animation for dialog background
+    val blurRadius by animateFloatAsState(
+        targetValue = if (showEditDialog) 12f else 0f,
+        animationSpec = tween(durationMillis = 200),
+        label = "blurRadius"
+    )
+    
     Box(
         modifier = modifier
             .fillMaxSize()
+            .blur(radius = blurRadius.dp)
             .background(
                 Brush.verticalGradient(
                     colors = listOf(
