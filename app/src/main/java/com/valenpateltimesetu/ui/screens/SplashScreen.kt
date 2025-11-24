@@ -291,7 +291,6 @@ fun SplashScreen(navController: NavHostController, preferencesManager: Preferenc
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Spacer(modifier = Modifier.height(10.dp))
 
             // Logo section with dynamic animations
             Column(
@@ -311,7 +310,7 @@ fun SplashScreen(navController: NavHostController, preferencesManager: Preferenc
                         fontFamily = FontFamily.SansSerif,
                         textAlign = TextAlign.Center,
                         letterSpacing = 1.sp,
-                        modifier = Modifier
+                        modifier = Modifier.padding(top = 60.dp)
                             .alpha(if (showTagline) 1f else 0f)
                     )
                 }
@@ -385,8 +384,7 @@ fun SplashScreen(navController: NavHostController, preferencesManager: Preferenc
                 modifier = Modifier
                     .fillMaxWidth()
                     .alpha(quoteAlpha)
-                    .scale(quoteScale)
-                    .offset(y = (70).dp),
+                    .scale(quoteScale),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(28.dp)
             ) {
@@ -400,11 +398,10 @@ fun SplashScreen(navController: NavHostController, preferencesManager: Preferenc
                     textAlign = TextAlign.Center,
                     lineHeight = 26.sp,
                     letterSpacing = 0.3.sp,
-                    modifier = Modifier.fillMaxWidth(0.85f)
+                    modifier = Modifier.padding(bottom = 80.dp).fillMaxWidth(0.85f)
                 )
             }
 
-            Spacer(modifier = Modifier.height(50.dp))
         }
     }
 }
