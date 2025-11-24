@@ -24,6 +24,7 @@ import com.valenpateltimesetu.ui.screens.SettingsScreen
 import com.valenpateltimesetu.ui.screens.SplashScreen
 import com.valenpateltimesetu.ui.screens.TermsConditionsScreen
 import com.valenpateltimesetu.ui.screens.UserGuideScreen
+import com.valenpateltimesetu.ui.screens.features.*
 import com.valenpateltimesetu.ui.theme.backgroundColor
 
 @Composable
@@ -66,11 +67,24 @@ fun AppNavigation() {
                 composable("onboarding") { 
                     OnboardingScreen(navController) 
                 }
-                composable("home") { HomeScreen() }
+                composable("home") { HomeScreen(navController = navController) }
                 composable("settings") { SettingsScreen(navController) }
                 composable("privacy_policy") { PrivacyPolicyScreen(navController) }
                 composable("terms_conditions") { TermsConditionsScreen(navController) }
                 composable("user_guide") { UserGuideScreen(navController) }
+                
+                // Feature Screens
+                composable("adaptive_focus") { AdaptiveFocusModeScreen(navController) }
+                composable("study_snapshot") { StudySnapshotScreen(navController) }
+                composable("life_equation") { LifeEquationScreen(navController) }
+                composable("session_reflection") { SessionReflectionScreen(navController) }
+                composable("focus_insights") { FocusInsightsScreen(navController) }
+                composable("parent_dashboard") { ParentDashboardScreen(navController) }
+                composable("hero_cards") { HeroCardsScreen(navController) }
+                composable("routines") { RoutinesScreen(navController) }
+                composable("distraction_lock") { DistractionLockScreen(navController) }
+                composable("cognitive_games") { CognitiveGamesScreen(navController) }
+                composable("emotional_wellness") { EmotionalWellnessScreen(navController) }
             }
         }
     }

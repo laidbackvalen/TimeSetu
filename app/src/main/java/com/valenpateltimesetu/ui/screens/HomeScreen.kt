@@ -38,10 +38,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.derivedStateOf
@@ -79,6 +81,8 @@ import com.valenpateltimesetu.ui.theme.themeColor
 import com.valenpateltimesetu.ui.tutorial.TutorialOverlay
 import com.valenpateltimesetu.ui.tutorial.TutorialStep
 import com.valenpateltimesetu.ui.tutorial.rememberTutorialState
+import com.valenpateltimesetu.ui.navigation.drawer.AppDrawer
+import androidx.navigation.compose.currentBackStackEntryAsState
 import kotlinx.coroutines.delay
 import kotlin.math.*
 
@@ -284,11 +288,18 @@ fun ScrollableNumberPicker(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    navController: androidx.navigation.NavController? = null
+) {
     val context = LocalContext.current
     val preferencesManager = remember { PreferencesManager(context) }
     val density = LocalDensity.current
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+    val currentRoute = navController?.currentBackStackEntryAsState()?.value?.destination?.route
     
     var totalTime by remember { mutableStateOf(25 * 60 * 1000L) }
     var timeLeft by remember { mutableStateOf(totalTime) }
@@ -394,7 +405,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         if (timeLeft <= 0) isRunning = false
     }
 
-    val circleSize = 300.dp
+    val circleSize = 250.dp
     val strokeWidth = 15f
     val radiusPx = with(LocalDensity.current) { (circleSize / 2).toPx() }
     val modes = listOf(
@@ -424,28 +435,56 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         label = "blurRadius"
     )
     
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .blur(radius = blurRadius.dp)
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF0A0A0F),
-                        Color(0xFF1A1A2E),
-                        Color(0xFF16213E),
-                        backgroundColor
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            if (navController != null) {
+                AppDrawer(
+                    navController = navController,
+                    currentRoute = currentRoute,
+                    onClose = { scope.launch { drawerState.close() } }
+                )
+            }
+        }
+    ) {
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .blur(radius = blurRadius.dp)
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0xFF0A0A0F),
+                            Color(0xFF1A1A2E),
+                            Color(0xFF16213E),
+                            backgroundColor
+                        )
                     )
                 )
-            )
-            .statusBarsPadding()
-    ) {
-        LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .offset(offsetX)
-                .padding(top = 20.dp)
-                .align(Alignment.TopCenter)
+                .statusBarsPadding()
+        ) {
+            // Drawer Menu Button
+            IconButton(
+                onClick = { scope.launch { drawerState.open() } },
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(16.dp)
+                    .zIndex(10f)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Menu,
+                    contentDescription = "Menu",
+                    tint = Color.White,
+                    modifier = Modifier.size(28.dp)
+                )
+            }
+            
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .offset(offsetX)
+                    .padding(top = 70.dp)
+                    .align(Alignment.TopCenter)
                 .onGloballyPositioned { coordinates ->
                     val position = coordinates.localToRoot(Offset.Zero)
                     val size = coordinates.size
@@ -532,7 +571,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             // Glassmorphic container for timer
             Box(
                 modifier = Modifier
-                    .size(340.dp)
+                    .size(280.dp)
                     .onGloballyPositioned { coordinates ->
                         val position = coordinates.localToRoot(Offset.Zero)
                         val size = coordinates.size
@@ -1237,6 +1276,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     }
                 }
             }
+        }
         }
         }
     }
