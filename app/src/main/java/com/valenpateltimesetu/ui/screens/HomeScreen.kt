@@ -293,7 +293,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
     var totalTime by remember { mutableStateOf(25 * 60 * 1000L) }
     var timeLeft by remember { mutableStateOf(totalTime) }
     var isRunning by remember { mutableStateOf(false) }
-    var startAnimation by remember { mutableStateOf(true) } // Start with true to show background immediately
+    var startAnimation by remember { mutableStateOf(false) } // Start with false to trigger slide-in animation
     var showEditDialog by remember { mutableStateOf(false) }
     var minutesInput by remember { mutableStateOf(0) }
     var secondsInput by remember { mutableStateOf(0) }
@@ -364,18 +364,16 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         steps
     }
 
-    val alphaAnim by animateFloatAsState(
-        targetValue = if (startAnimation) 1f else 0f,
-        animationSpec = tween(durationMillis = 1000)
-    )
-    val scaleAnim by animateFloatAsState(
-        targetValue = if (startAnimation) 1f else 0.8f,
-        animationSpec = tween(durationMillis = 1000)
-    )
     val offsetX: Dp by animateDpAsState(
         targetValue = if (startAnimation) 0.dp else (-300).dp,
         animationSpec = tween(durationMillis = 1000)
     )
+
+    // Trigger slide-in animation on first load
+    LaunchedEffect(Unit) {
+        delay(100) // Small delay to ensure layout is ready
+        startAnimation = true
+    }
 
     val infiniteTransition = rememberInfiniteTransition(label = "bounceAnim")
     val bounceScale by infiniteTransition.animateFloat(
@@ -440,8 +438,6 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     )
                 )
             )
-            .alpha(alphaAnim)
-            .scale(scaleAnim)
             .statusBarsPadding()
     ) {
         LazyRow(
