@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,7 +33,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavHostController
+import android.app.Activity
+import android.view.View
+import android.view.WindowManager
 import com.valenpateltimesetu.data.PreferencesManager
 import com.valenpateltimesetu.ui.quotes.splashQuotes
 import com.valenpateltimesetu.ui.theme.backgroundColor
@@ -168,6 +176,61 @@ fun TypewriterText(
 
 @Composable
 fun SplashScreen(navController: NavHostController, preferencesManager: PreferencesManager) {
+    val view = LocalView.current
+    
+    // Hide all system bars for full screen immersive mode
+    DisposableEffect(Unit) {
+        val window = (view.context as? Activity)?.window
+        window?.let {
+            // Enable edge-to-edge
+            WindowCompat.setDecorFitsSystemWindows(it, false)
+            
+            // Get the decor view
+            val decorView = it.decorView
+            
+            // Post to ensure view is fully attached
+            decorView.post {
+                // Set window flags for fullscreen
+                it.addFlags(
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN
+                )
+                
+                // Use WindowInsetsControllerCompat to hide system bars
+                val insetsController = WindowInsetsControllerCompat(it, view)
+                insetsController.hide(WindowInsetsCompat.Type.statusBars())
+                insetsController.hide(WindowInsetsCompat.Type.navigationBars())
+                insetsController.systemBarsBehavior = 
+                    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                
+                // Set system UI visibility flags directly for maximum compatibility
+                // This is the key - using IMMERSIVE_STICKY to keep bars hidden
+                decorView.systemUiVisibility = (
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    or View.SYSTEM_UI_FLAG_FULLSCREEN
+                    or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                )
+            }
+        }
+        
+        onDispose {
+            val window = (view.context as? Activity)?.window
+            window?.let {
+                val decorView = it.decorView
+                decorView.post {
+                    // Clear fullscreen flags
+                    it.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+                    
+                    val insetsController = WindowInsetsControllerCompat(it, view)
+                    insetsController.show(WindowInsetsCompat.Type.systemBars())
+                    decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
+                }
+            }
+        }
+    }
+    
     val randomQuotes by remember { mutableStateOf(splashQuotes.random()) }
     var startAnimation by remember { mutableStateOf(false) }
     var showContent by remember { mutableStateOf(false) }
@@ -252,7 +315,7 @@ fun SplashScreen(navController: NavHostController, preferencesManager: Preferenc
         showTagline = true
         delay(1200)
         showQuote = true
-        delay(600000)
+        delay(6000)
         
         // Navigate based on onboarding status
         if (preferencesManager.isOnboardingCompleted()) {
