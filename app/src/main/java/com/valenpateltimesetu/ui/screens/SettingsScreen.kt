@@ -168,8 +168,10 @@ fun SettingsScreen(navController: NavController) {
                     iconColor = themeColor,
                     onClick = {
                         preferencesManager.resetTutorial()
+                        // Navigate to home - SideEffect will check preference and show tutorial
                         navController.navigate("home") {
                             popUpTo("settings") { inclusive = false }
+                            launchSingleTop = false // Ensure home recomposes
                         }
                     }
                 )

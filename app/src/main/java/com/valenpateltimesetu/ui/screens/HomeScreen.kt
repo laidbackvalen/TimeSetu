@@ -298,10 +298,21 @@ fun HomeScreen(modifier: Modifier = Modifier) {
     var minutesInput by remember { mutableStateOf(0) }
     var secondsInput by remember { mutableStateOf(0) }
     
-    // Tutorial state - FORCE SHOW for testing
-    var showTutorial by remember { mutableStateOf(true) } // Force show for testing
-    // var showTutorial by remember { mutableStateOf(!preferencesManager.isTutorialCompleted()) } // Original
+    // Tutorial state - check if tutorial has been completed
+    var showTutorial by remember { mutableStateOf(!preferencesManager.isTutorialCompleted()) }
     var tutorialStep by remember { mutableStateOf(0) }
+    
+    // Check tutorial status whenever the screen is recomposed
+    // This ensures tutorial shows when returning from settings
+    SideEffect {
+        val shouldShow = !preferencesManager.isTutorialCompleted()
+        if (shouldShow != showTutorial) {
+            showTutorial = shouldShow
+            if (shouldShow) {
+                tutorialStep = 0 // Reset to first step when showing tutorial
+            }
+        }
+    }
     var timerPosition by remember { mutableStateOf<Offset?>(null) }
     var timerSize by remember { mutableStateOf<Size?>(null) }
     var modeSelectorPosition by remember { mutableStateOf<Offset?>(null) }

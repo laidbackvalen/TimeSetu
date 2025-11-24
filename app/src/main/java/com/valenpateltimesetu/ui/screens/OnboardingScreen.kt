@@ -199,13 +199,14 @@ fun OnboardingScreen(navController: NavHostController) {
             }
         }
         
-        // Next/Get Started button at bottom
+        // Next/Get Started button at bottom - placed after pager to ensure it's on top
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 60.dp)
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp)
+                .zIndex(100f) // Higher zIndex to ensure it's above pager
         ) {
             if (currentPage < onboardingSlides.size - 1) {
                 // Next button
