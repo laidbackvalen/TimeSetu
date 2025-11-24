@@ -104,9 +104,9 @@ fun UserGuideScreen(navController: NavController) {
                     gradientColors = listOf(themeColor, themeColor.copy(alpha = 0.6f)),
                     content = {
                         StepItem(number = "01", title = "Start the Timer", description = "Tap the Play button (▶) to begin your Pomodoro session. The timer will count down from your selected time.")
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
                         StepItem(number = "02", title = "Select Time Mode", description = "Choose from preset options (5 min, 15 min, or 25 min) or create your own custom time duration.")
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
                         StepItem(number = "03", title = "Set Custom Time", description = "Tap the edit icon (✏️) next to the timer, use number pickers to set minutes and seconds, then tap 'Set'.")
                     }
                 )
@@ -124,19 +124,19 @@ fun UserGuideScreen(navController: NavController) {
                             title = "Play",
                             description = "Starts the timer countdown"
                         )
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
                         FeatureItem(
                             iconRes = R.drawable.ic_pause,
                             title = "Pause",
                             description = "Pauses the timer at current time"
                         )
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
                         FeatureItem(
                             icon = Icons.Default.Refresh,
                             title = "Reset",
                             description = "Resets timer to original time"
                         )
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
                         FeatureItem(
                             icon = Icons.Default.Edit,
                             title = "Custom Time",
@@ -165,9 +165,9 @@ fun UserGuideScreen(navController: NavController) {
                         PomodoroStep(number = 3, text = "Repeat 3-4 times")
                         PomodoroStep(number = 4, text = "Take a longer 15-30 minute break")
                         
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
                         Divider(color = Color.White.copy(alpha = 0.1f), thickness = 1.dp)
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
                         
                         Text(
                             text = "Benefits",
@@ -195,27 +195,27 @@ fun UserGuideScreen(navController: NavController) {
                             question = "How do I set a custom time?",
                             answer = "Tap the edit icon (✏️) next to the timer display. Use the number pickers to set your desired minutes and seconds, then tap 'Set' to confirm."
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
                         ModernFAQItem(
                             question = "Can I pause the timer?",
                             answer = "Yes! Tap the Play button while the timer is running to pause it. Tap again to resume from where you left off."
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
                         ModernFAQItem(
                             question = "What happens when timer reaches zero?",
                             answer = "The timer stops and automatically resets to your original time. Use this as a signal to take a break or start your next work session."
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
                         ModernFAQItem(
                             question = "Can I use custom times for Pomodoro?",
                             answer = "Absolutely! While the classic Pomodoro uses 25 minutes, you can customize it to any duration that works best for your workflow."
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
                         ModernFAQItem(
                             question = "Does the timer work in background?",
                             answer = "Yes, the timer continues running when you switch apps or lock your device, allowing you to focus on your work while tracking time."
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
                         ModernFAQItem(
                             question = "How do I reset the timer?",
                             answer = "Tap the Reset button (↻) at any time to return to your original set time, whether the timer is running, paused, or stopped."
@@ -238,7 +238,7 @@ fun UserGuideScreen(navController: NavController) {
                                 "Try resetting the timer and starting again"
                             )
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
                         IssueItem(
                             issue = "Custom time not saving",
                             solutions = listOf(
@@ -246,7 +246,7 @@ fun UserGuideScreen(navController: NavController) {
                                 "Check that minutes and seconds are within valid range (0-59)"
                             )
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
                         IssueItem(
                             issue = "Timer stops unexpectedly",
                             solutions = listOf(
@@ -254,7 +254,7 @@ fun UserGuideScreen(navController: NavController) {
                                 "Ensure the app has necessary permissions"
                             )
                         )
-                        Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
                         IssueItem(
                             issue = "App not responding",
                             solutions = listOf(
