@@ -23,6 +23,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
@@ -97,15 +98,14 @@ fun SettingsScreen(navController: NavController) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
         ) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 20.dp),
                 contentPadding = PaddingValues(
-                    top = 20.dp,
-                    bottom = 80.dp // Extra padding for bottom navigation bar
+                    top = innerPadding.calculateTopPadding() + 20.dp,
+                    bottom = innerPadding.calculateBottomPadding() + 80.dp
                 ),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
@@ -207,9 +207,8 @@ fun SettingsScreen(navController: NavController) {
                 Spacer(modifier = Modifier.height(24.dp))
             }
         }
-        }
         
-        // Version Dialog
+            // Version Dialog
         if (showVersionDialog) {
             VersionDialog(
                 onDismiss = { showVersionDialog = false },
@@ -223,6 +222,7 @@ fun SettingsScreen(navController: NavController) {
                 onDismiss = { showFeedbackDialog = false },
                 context = context
             )
+        }
         }
     }
 }
