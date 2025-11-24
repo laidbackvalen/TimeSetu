@@ -252,7 +252,7 @@ fun SplashScreen(navController: NavHostController, preferencesManager: Preferenc
         showTagline = true
         delay(1200)
         showQuote = true
-        delay(6000)
+        delay(600000)
         
         // Navigate based on onboarding status
         if (preferencesManager.isOnboardingCompleted()) {
@@ -287,12 +287,11 @@ fun SplashScreen(navController: NavHostController, preferencesManager: Preferenc
         // Main content
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(20.dp),
+                .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Spacer(modifier = Modifier.height(60.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             // Logo section with dynamic animations
             Column(
@@ -300,8 +299,23 @@ fun SplashScreen(navController: NavHostController, preferencesManager: Preferenc
                     .alpha(contentAlpha)
                     .offset(y = contentOffsetY),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(40.dp)
+                verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
+                // Tagline with fade-in
+                if (showTagline) {
+                    Text(
+                        text = "Minimal Distraction, Maximum Results",
+                        fontSize = 19.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White.copy(alpha = 0.95f),
+                        fontFamily = FontFamily.SansSerif,
+                        textAlign = TextAlign.Center,
+                        letterSpacing = 1.sp,
+                        modifier = Modifier
+                            .alpha(if (showTagline) 1f else 0f)
+                    )
+                }
+
                 // Rotating rings around logo
                 Box(
                     modifier = Modifier.size(200.dp),
@@ -364,31 +378,6 @@ fun SplashScreen(navController: NavHostController, preferencesManager: Preferenc
                         )
                     }
                 }
-
-                // App name with typewriter effect
-                if (showContent) {
-                    TypewriterText(
-                        text = "TimeSetu",
-                        fontSize = 48.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
-                        modifier = Modifier
-                    )
-                }
-
-                // Tagline with fade-in
-                if (showTagline) {
-                    Text(
-                        text = "Minimal Distraction, Maximum Results",
-                        fontSize = 19.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color.White.copy(alpha = 0.95f),
-                        fontFamily = FontFamily.SansSerif,
-                        textAlign = TextAlign.Center,
-                        letterSpacing = 1.sp,
-                        modifier = Modifier.alpha(if (showTagline) 1f else 0f)
-                    )
-                }
             }
 
             // Bottom section with quote
@@ -396,7 +385,8 @@ fun SplashScreen(navController: NavHostController, preferencesManager: Preferenc
                 modifier = Modifier
                     .fillMaxWidth()
                     .alpha(quoteAlpha)
-                    .scale(quoteScale),
+                    .scale(quoteScale)
+                    .offset(y = (70).dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(28.dp)
             ) {
@@ -412,29 +402,6 @@ fun SplashScreen(navController: NavHostController, preferencesManager: Preferenc
                     letterSpacing = 0.3.sp,
                     modifier = Modifier.fillMaxWidth(0.85f)
                 )
-
-                // Loading indicator with glow
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(
-                            brush = Brush.radialGradient(
-                                colors = listOf(
-                                    themeColor.copy(alpha = 0.3f),
-                                    Color.Transparent
-                                )
-                            ),
-                            shape = CircleShape
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(36.dp),
-                        color = themeColor,
-                        strokeWidth = 3.5.dp
-                    )
-                }
             }
 
             Spacer(modifier = Modifier.height(50.dp))
